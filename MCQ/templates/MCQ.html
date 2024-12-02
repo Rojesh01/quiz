@@ -1,0 +1,28 @@
+<div class="container mt-5 pt-3 animate-fade-in">
+  <h2 class="text-center mb-4">Quiz Questions</h2>
+  <div class="col-md-8 mx-auto">
+      {% for question in questions %}
+      <div class="quiz-card">
+          <div class="question-container">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                  <span class="category-badge">{{ question.category.category_name }}</span>
+                  <span class="marks-badge">{{ question.marks }} marks</span>
+              </div>
+              <h5 class="question-title">{{ question.question }}</h5>
+              
+              <div class="answers">
+                  {% for answer in question.question_answer.all %}
+                  <div class="answer-option">
+                      {{ answer.answer }}
+                  </div>
+                  {% endfor %}
+              </div>
+          </div>
+      </div>
+      {% endfor %}
+
+      <div class="text-center mt-4 mb-5">
+          <a href="{% url 'quiz:quiz' %}" class="quiz-btn quiz-btn-primary">Start Quiz</a>
+      </div>
+  </div>
+</div>

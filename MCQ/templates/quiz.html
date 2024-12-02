@@ -1,0 +1,156 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{% static 'MCQ/style.css' %}" rel="stylesheet">
+</head>
+<body>
+    {% block content %}
+    {% endblock %}
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<div class="container mt-5 animate-fade-in">
+    <div class="col-md-8 mx-auto">
+        <div class="quiz-progress">
+            <div class="quiz-progress-bar" style="width: 0%"></div>
+        </div>
+
+        <form method="POST" id="quizForm">
+            {% csrf_token %}
+            
+            {% if error_message %}
+            <div class="alert alert-danger">{{ error_message }}</div>
+            {% endif %}
+
+            {% for question in questions %}
+            <div class="quiz-card" data-question="{{ forloop.counter }}">
+                <div class="question-container">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <span class="category-badge">{{ question.category.category_name }}</span>
+                        <span class="marks-badge">{{ question.marks }} marks</span>
+                    </div>
+                    <h5 class="question-title">{{ forloop.counter }}. {{ question.question }}</h5>
+                    
+                    {% for answer in question.question_answer.all %}
+                    <div class="answer-option">
+                        <input type="radio" class="form-check-input" 
+                               name="question_{{ question.uid }}" 
+                               value="{{ answer.uid }}" 
+                               id="answer_{{ answer.uid }}"
+                               onchange="updateProgress()">
+                        <label class="answer-label" for="answer_{{ answer.uid }}">
+                            {{ answer.answer }}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <div class="text-center mt-4 mb-5">
+                <button type="submit" class="quiz-btn quiz-btn-primary">Submit Quiz</button>
+            </div>
+            <style>
+:root {
+    --primary-color: #4a90e2;
+    --success-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --warning-color: #f1c40f;
+    --background-color: #f5f6fa;
+    --card-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    background-color: var(red background-color);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* Common Card Styles */
+.quiz-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-bottom: 1.5rem;
+    border: none;
+}
+
+.quiz-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Question Styles */
+.question-container {
+    padding: 1.5rem;
+}
+
+.question-title {
+    color: #2c3e50;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #eee;
+}
+
+.category-badge {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+.marks-badge {
+    background-color: #34495e;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    margin-left: 0.5rem;
+}
+
+/* Answer Options Styles */
+.answer-option {
+    position: relative;
+    padding: 0.75rem 1rem;
+    margin: 0.5rem 0;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.answer-option:hover {
+    border-color: var(--primary-color);
+    background-color: #f8f9ff;
+}
+
+.form-check-input:checked + .answer-label {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease forwards;
+}
+            </style>
+        </form>
+    </div>
+</div>
